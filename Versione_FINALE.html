@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gabriele Salimbeni | Ingegnere</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --text-main: #e2e8f0;
+            --text-muted: #94a3b8;
+            --accent: #5eead4;
+            --accent-soft: rgba(94, 234, 212, 0.1);
+            --card-hover: rgba(30, 41, 59, 0.5);
+            --border-light: rgba(255, 255, 255, 0.05);
+            --modal-bg: #1e293b;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-muted);
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        /* Blocca lo scorrimento del body quando la modale è aperta */
+        body.modal-open { overflow: hidden; }
+
+        .cursor-glow {
+            pointer-events: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: 10;
+            background: radial-gradient(600px circle at var(--x, 50%) var(--y, 50%), rgba(29, 78, 216, 0.15), transparent 80%);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            position: relative;
+            z-index: 20;
+        }
+
+        @media (min-width: 1024px) {
+            .container { display: flex; justify-content: space-between; gap: 48px; }
+            header { position: sticky; top: 0; height: 100vh; width: 48%; padding: 96px 0; display: flex; flex-direction: column; }
+            main { width: 52%; padding: 96px 0; }
+        }
+
+        h1 { color: var(--text-main); font-size: 3rem; font-weight: 700; letter-spacing: -0.025em; }
+        h2 { color: var(--text-main); font-size: 1.25rem; font-weight: 500; margin-top: 8px; }
+        header p { margin-top: 16px; max-width: 350px; }
+
+        nav { margin-top: 70px; display: none; }
+        @media (min-width: 1024px) { nav { display: block; } }
+        nav ul { list-style: none; }
+        nav a {
+            text-decoration: none; color: var(--text-muted); font-size: 0.85rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.1em; display: flex; align-items: center;
+            padding: 8px 0; transition: all 0.3s ease;
+        }
+        nav a::before {
+            content: ''; display: inline-block; width: 30px; height: 1px;
+            background-color: var(--text-muted); margin-right: 16px; transition: all 0.3s ease;
+        }
+        nav a:hover, nav a.active { color: var(--text-main); }
+        nav a:hover::before, nav a.active::before { width: 60px; background-color: var(--text-main); }
+
+        section { margin-bottom: 96px; }
+        .section-title {
+            display: block; color: var(--text-main); font-size: 1rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 32px;
+        }
+        @media (min-width: 1024px) { .section-title { display: none; } }
+
+        /* Stile Minimal per le Card */
+        .card {
+            display: grid; grid-template-columns: 1fr; gap: 16px; padding: 24px;
+            border-radius: 12px; transition: all 0.3s ease; border: 1px solid transparent;
+            margin-bottom: 16px; margin-left: -24px; margin-right: -24px; cursor: pointer;
+        }
+        @media (min-width: 640px) { .card { grid-template-columns: 1fr 3fr; } }
+        .card:hover { background-color: var(--card-hover); border-color: var(--border-light); }
+        .card:hover .card-title { color: var(--accent); }
+
+        .card-date { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-top: 4px; }
+        .card-title { color: var(--text-main); font-weight: 500; font-size: 1.05rem; margin-bottom: 8px; transition: color 0.2s; }
+        .card-desc { font-size: 0.9rem; margin-bottom: 16px; }
+
+        /* Chips Minimal nella pagina principale */
+        .skills-minimal { display: flex; flex-wrap: wrap; gap: 8px; }
+        .chip-minimal { background-color: var(--accent-soft); color: var(--accent); font-size: 0.75rem; font-weight: 500; padding: 4px 12px; border-radius: 999px; }
+
+        /* ========================================= */
+        /* STILI PER LA MODALE (Dettagli del progetto)*/
+        /* ========================================= */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background-color: rgba(15, 23, 42, 0.85); backdrop-filter: blur(8px);
+            z-index: 100; display: flex; justify-content: center; align-items: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+        }
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
+
+        .modal-content {
+            background-color: var(--modal-bg);
+            width: 90%; max-width: 700px; max-height: 85vh;
+            border-radius: 16px; padding: 40px; overflow-y: auto;
+            border: 1px solid var(--border-light);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            position: relative;
+            transform: translateY(20px); transition: transform 0.3s ease;
+        }
+        .modal-overlay.active .modal-content { transform: translateY(0); }
+
+        .close-btn {
+            position: absolute; top: 24px; right: 24px;
+            background: none; border: none; color: var(--text-muted);
+            font-size: 1.5rem; cursor: pointer; transition: color 0.2s;
+        }
+        .close-btn:hover { color: var(--accent); }
+
+        .modal-title { color: var(--text-main); font-size: 1.5rem; font-weight: 700; margin-bottom: 4px; line-height: 1.2;}
+        .modal-subtitle { color: var(--accent); font-size: 0.9rem; font-weight: 500; margin-bottom: 24px; text-transform: uppercase; letter-spacing: 0.05em;}
+        
+        .modal-section { margin-bottom: 24px; }
+        .modal-section-title { color: var(--text-main); font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; border-bottom: 1px solid var(--border-light); padding-bottom: 4px;}
+        .modal-text { font-size: 0.95rem; margin-bottom: 12px; }
+
+        .modal-skills-grid { display: grid; grid-template-columns: 1fr; gap: 24px; margin-top: 32px; background: rgba(0,0,0,0.2); padding: 24px; border-radius: 8px;}
+        @media (min-width: 640px) { .modal-skills-grid { grid-template-columns: 1fr 1fr; } }
+        
+        .skill-list h5 { color: var(--text-main); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px;}
+        .skill-list ul { list-style-type: none; }
+        .skill-list li { font-size: 0.85rem; margin-bottom: 8px; display: flex; align-items: center; }
+        .skill-list li::before { content: '▹'; color: var(--accent); margin-right: 8px; font-size: 1.1rem;}
+
+        /* ========================================= */
+        /* SCROLLBAR MODERNA                         */
+        /* ========================================= */
+        
+        /* Per Chrome, Edge e Safari */
+        ::-webkit-scrollbar {
+            width: 6px; /* Molto sottile */
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent; /* Sfondo invisibile */
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(148, 163, 184, 0.3); /* Grigio tenue e semitrasparente */
+            border-radius: 10px; /* Bordi arrotondati */
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(94, 234, 212, 0.5); /* Diventa verde acqua quando ci passi sopra col mouse */
+        }
+
+        /* Per Firefox */
+        * {
+            scrollbar-width: thin;
+            scrollbar-color: rgba(148, 163, 184, 0.3) transparent;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="cursor-glow"></div>
+    
+    <div class="container">
+        <header>
+            <div>
+                <h1>Gabriele Salimbeni</h1>
+                <h2>Ingegneria Energetica & Nucleare</h2>
+                <p>Dal Politecnico di Torino alla modellazione avanzata. Mi occupo di termofluidodinamica, simulazioni numeriche e prototipazione per il settore aerospaziale ed energetico.</p>
+                <nav>
+                    <ul>
+                        <li><a href="#about" class="nav-link">About</a></li>
+                        <li><a href="#experience" class="nav-link">Esperienza</a></li>
+                        <li><a href="#projects" class="nav-link">Progetti</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </header>
+
+        <main>
+            <section id="about">
+                <h3 class="section-title">About</h3>
+                <p style="margin-bottom: 16px;">
+                    Attualmente iscritto al terzo anno di Ingegneria Energetica al Politecnico di Torino, mi preparo ad affrontare la magistrale in Ingegneria Nucleare. Il mio approccio all'ingegneria combina il rigore dell'analisi numerica con la tangibilità della prototipazione.
+                </p>
+            </section>
+
+            <section id="experience">
+                <h3 class="section-title">Esperienza</h3>
+                
+                <div class="card" onclick="openModal('modal-hydra')">
+                    <div class="card-date">Marzo 2026 — Presente</div>
+                    <div>
+                        <h4 class="card-title">Ricercatore Tesi Sperimentale · Progetto HYDRA</h4>
+                        <div class="card-desc">Conduzione di test sperimentali presso l'Environment Park di Torino per lo studio dei rilasci di idrogeno e metano in galleria del vento[cite: 19, 36].</div>
+                        <div class="skills-minimal">
+                            <span class="chip-minimal">Galleria del Vento</span>
+                            <span class="chip-minimal">Analisi Dati</span>
+                            <span class="chip-minimal">Sicurezza Gas</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="projects">
+                <h3 class="section-title">Progetti</h3>
+
+                <div class="card" onclick="openModal('modal-matlab')">
+                    <div class="card-date">Modellazione Numerica</div>
+                    <div>
+                        <h4 class="card-title">Modello Fluidodinamico di Svuotamento Bombole</h4>
+                        <div class="card-desc">Sviluppo di un codice MATLAB per simulare il transitorio termodinamico di rilasci critici ad alta pressione, validato con dati sperimentali[cite: 78, 118].</div>
+                        <div class="skills-minimal">
+                            <span class="chip-minimal">MATLAB</span>
+                            <span class="chip-minimal">Termodinamica</span>
+                            <span class="chip-minimal">Validazione Dati</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card" onclick="openModal('modal-cfd')">
+                    <div class="card-date">Progetto Accademico</div>
+                    <div>
+                        <h4 class="card-title">Simulazioni CFD e Trasferimento Termico</h4>
+                        <div class="card-desc">Sviluppo di script MATLAB per griglie di calcolo custom e validazione fluidodinamica tramite software commerciali.</div>
+                        <div class="skills-minimal">
+                            <span class="chip-minimal">MATLAB</span>
+                            <span class="chip-minimal">OpenFOAM</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card" onclick="openModal('modal-tower')">
+                    <div class="card-date">Hardware & Automazione</div>
+                    <div>
+                        <h4 class="card-title">Torre Idroponica Automatizzata</h4>
+                        <div class="card-desc">Progettazione CAD, stampa 3D FDM e implementazione fluidodinamica per un sistema verticale a ciclo chiuso.</div>
+                        <div class="skills-minimal">
+                            <span class="chip-minimal">Stampa 3D</span>
+                            <span class="chip-minimal">Automazione Idrica</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <footer style="margin-top: 96px; text-align: center; padding: 24px 0; font-size: 0.85rem; color: var(--text-muted); border-top: 1px solid var(--border-light);">
+                Design visivo ispirato al portfolio di <a href="https://brittanychiang.com/" target="_blank" style="color: var(--text-main); text-decoration: none; font-weight: 500; transition: color 0.2s;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text-main)'">Brittany Chiang</a>.
+            </footer>
+        </main>
+    </div>
+
+    <div id="modal-hydra" class="modal-overlay" onclick="closeModalOutside(event, 'modal-hydra')">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal('modal-hydra')">×</button>
+            <h3 class="modal-title">Progetto HYDRA: Test in Galleria del Vento</h3>
+            <div class="modal-subtitle">Environment Park, Torino</div>
+            
+            <div class="modal-section">
+                <div class="modal-section-title">Il Contesto e l'Attività</div>
+                <div class="modal-text">
+                    Il progetto HYDRA ha l'obiettivo di analizzare la sicurezza dell'idrogeno come vettore energetico[cite: 19]. Ho condotto campagne di test in una galleria del vento subsonica con flussi fino a 8 m/s[cite: 42]. L'ambiente di test ospitava un mock-up in scala 1:10[cite: 68]. Il rilevamento è avvenuto tramite spettrometro Raman in area ATEX[cite: 23, 28]. Nello scenario sperimentale "Urban", l'uso di ostacoli ha permesso di massimizzare la turbolenza e la dispersione del gas[cite: 234]. Durante le sessioni, ho isolato difetti di calibrazione del sensore che rilevava false concentrazioni di idrogeno anche in test di calibrazione investiti da flussi di azoto puro[cite: 170]. I risultati sperimentali sono stati confrontati criticamente con simulazioni CFD preesistenti, riscontrando misurazioni strumentali sistematicamente inferiori di un fattore 10 rispetto alle stime teoriche[cite: 251].
+                </div>
+            </div>
+
+            <div class="modal-skills-grid">
+                <div class="skill-list">
+                    <h5>Hard Skills Acquisite</h5>
+                    <ul>
+                        <li>Gestione flussi in galleria del vento</li>
+                        <li>Protocolli di sicurezza per gas infiammabili</li>
+                        <li>Acquisizione ed elaborazione dati sperimentali</li>
+                    </ul>
+                </div>
+                <div class="skill-list">
+                    <h5>Soft Skills Sviluppate</h5>
+                    <ul>
+                        <li>Rigore nel metodo scientifico</li>
+                        <li>Attenzione ai dettagli e gestione del rischio</li>
+                        <li>Comunicazione tecnica dei risultati</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-matlab" class="modal-overlay" onclick="closeModalOutside(event, 'modal-matlab')">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal('modal-matlab')">×</button>
+            <h3 class="modal-title">Predizione Termofluidodinamica di Svuotamento Bombole</h3>
+            <div class="modal-subtitle">Modellazione Numerica e Validazione Sperimentale</div>
+            
+            <div class="modal-section">
+                <div class="modal-section-title">L'Analisi e lo Sviluppo</div>
+                <div class="modal-text">
+                    Durante le sessioni di test in galleria del vento, è emersa la necessità operativa di stimare a priori l'autonomia dei serbatoi di gas ad alta pressione (150 bar)[cite: 78, 80]. Invece di procedere per tentativi, ho sviluppato un modello MATLAB modulare che simula l'intero transitorio fisico [cite: 96]: l'espansione politropica (n=1.15) nella bombola [cite: 106, 107], la laminazione reale con coefficiente di Joule-Thomson [cite: 108] e l'efflusso isentropico all'ugello in condizioni di blocco sonico[cite: 143].
+                    <br><br>
+                    Il modello ha saputo prevedere fenomenologie termodinamiche complesse, come il drastico calo delle temperature interne (fino a -78.31 °C) [cite: 126] e il conseguente aumento della densità e della massa erogata per singolo test[cite: 126, 127]. L'affidabilità dell'algoritmo è stata validata sul campo confrontando le previsioni numeriche con le misurazioni effettive[cite: 118]. Questo ha permesso di confermare con precisione il limite operativo critico dell'idrogeno (solo 23 rilasci utili ad altissima velocità) rispetto all'azoto (82 rilasci)[cite: 163].
+                </div>
+            </div>
+
+            <div class="modal-skills-grid">
+                <div class="skill-list">
+                    <h5>Hard Skills Acquisite</h5>
+                    <ul>
+                        <li>Scripting modulare in MATLAB</li>
+                        <li>Modellazione di flussi compressibili (efflusso sonico)</li>
+                        <li>Validazione Modello/Realtà (Data-Driven)</li>
+                    </ul>
+                </div>
+                <div class="skill-list">
+                    <h5>Soft Skills Sviluppate</h5>
+                    <ul>
+                        <li>Traduzione di problemi fisici in logica computazionale</li>
+                        <li>Problem-solving analitico in contesti operativi</li>
+                        <li>Integrazione tra teoria e sperimentazione sul campo</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-cfd" class="modal-overlay" onclick="closeModalOutside(event, 'modal-cfd')">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal('modal-cfd')">×</button>
+            <h3 class="modal-title">Modellazione Numerica: Scambio Termico</h3>
+            <div class="modal-subtitle">Progetto Accademico Individuale</div>
+            
+            <div class="modal-section">
+                <div class="modal-section-title">L'Analisi e lo Sviluppo</div>
+                <div class="modal-text">
+                    L'obiettivo del progetto era non solo utilizzare, ma comprendere a fondo i solutori fluidodinamici. Invece di limitarmi a software pre-confezionati, ho sviluppato script personalizzati in MATLAB per la generazione di mesh e la risoluzione delle equazioni di governo del calore. Successivamente, ho ricreato gli stessi scenari in OpenFOAM e Ansys Fluent per confrontare l'accuratezza dei miei modelli rispetto agli standard industriali, affinando la mia sensibilità termodinamica.
+                </div>
+            </div>
+
+            <div class="modal-skills-grid">
+                <div class="skill-list">
+                    <h5>Hard Skills Acquisite</h5>
+                    <ul>
+                        <li>Programmazione in MATLAB</li>
+                        <li>Setup simulazioni in OpenFOAM e Ansys</li>
+                        <li>Teoria della discretizzazione spaziale (Meshing)</li>
+                    </ul>
+                </div>
+                <div class="skill-list">
+                    <h5>Soft Skills Sviluppate</h5>
+                    <ul>
+                        <li>Pensiero critico e validazione dei risultati</li>
+                        <li>Pazienza e attitudine al debugging</li>
+                        <li>Capacità di auto-apprendimento su software complessi</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-tower" class="modal-overlay" onclick="closeModalOutside(event, 'modal-tower')">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal('modal-tower')">×</button>
+            <h3 class="modal-title">Ingegnerizzazione Torre Idroponica</h3>
+            <div class="modal-subtitle">Prototipazione Hardware e Automazione</div>
+            
+            <div class="modal-section">
+                <div class="modal-section-title">Il Progetto e la Realizzazione</div>
+                <div class="modal-text">
+                    Un progetto nato dalla volontà di unire sostenibilità e ingegneria pratica. Ho dimensionato l'intero impianto idraulico, calcolando prevalenza e portate necessarie per un sistema di coltivazione verticale a ciclo chiuso. Ho modellato in CAD i moduli abitativi per le piante e li ho stampati in 3D (utilizzando polimeri come PLA, PETG e TPU a seconda delle necessità di flessibilità e tenuta stagna). Infine, ho implementato i circuiti per l'automazione dei cicli di pompa.
+                </div>
+            </div>
+
+            <div class="modal-skills-grid">
+                <div class="skill-list">
+                    <h5>Hard Skills Acquisite</h5>
+                    <ul>
+                        <li>Stampa 3D FDM (Bambu Studio) e materiali tecnici</li>
+                        <li>Calcolo e dimensionamento fluidodinamico pratico</li>
+                        <li>Elettronica di base e automazione relè</li>
+                    </ul>
+                </div>
+                <div class="skill-list">
+                    <h5>Soft Skills Sviluppate</h5>
+                    <ul>
+                        <li>Iniziativa e gestione di un progetto end-to-end</li>
+                        <li>Troubleshooting fisico (dal modello alla realtà)</li>
+                        <li>Approccio sistemico all'ingegneria</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Effetto cursore
+        document.addEventListener('mousemove', (e) => {
+            const glow = document.querySelector('.cursor-glow');
+            glow.style.setProperty('--x', `${e.clientX}px`);
+            glow.style.setProperty('--y', `${e.clientY}px`);
+        });
+
+        // Navigazione a scorrimento
+        const sections = document.querySelectorAll('section');
+        const navLinks = document.querySelectorAll('.nav-link');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    navLinks.forEach(link => link.classList.remove('active'));
+                    const id = entry.target.getAttribute('id');
+                    const activeLink = document.querySelector(`.nav-link[href="#${id}"]`);
+                    if(activeLink) activeLink.classList.add('active');
+                }
+            });
+        }, { root: null, rootMargin: '0px', threshold: 0.3 });
+        sections.forEach(section => observer.observe(section));
+
+        // LOGICA PER LE MODALI
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+            document.body.classList.add('modal-open'); // Blocca lo scorrimento del sito dietro
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+            document.body.classList.remove('modal-open'); // Sblocca lo scorrimento
+        }
+
+        // Chiude la modale se clicchi fuori dal riquadro del contenuto
+        function closeModalOutside(event, modalId) {
+            if (event.target.id === modalId) {
+                closeModal(modalId);
+            }
+        }
+    </script>
+</body>
+</html>
