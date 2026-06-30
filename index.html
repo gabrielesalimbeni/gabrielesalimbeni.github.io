@@ -264,38 +264,57 @@
         </main>
     </div>
 
-    <div id="modal-hydra" class="modal-overlay" onclick="closeModalOutside(event, 'modal-hydra')">
-        <div class="modal-content">
-            <button class="close-btn" onclick="closeModal('modal-hydra')">×</button>
-            <h3 class="modal-title">Progetto HYDRA: Test in Galleria del Vento</h3>
-            <div class="modal-subtitle">Environment Park, Torino</div>
-            
-            <div class="modal-section">
-                <div class="modal-section-title">Il Contesto e l'Attività</div>
-                <div class="modal-text">
-                    Il progetto HYDRA ha l'obiettivo di analizzare la sicurezza dell'idrogeno come vettore energetico[cite: 19]. Ho condotto campagne di test in una galleria del vento subsonica con flussi fino a 8 m/s[cite: 42]. L'ambiente di test ospitava un mock-up in scala 1:10[cite: 68]. Il rilevamento è avvenuto tramite spettrometro Raman in area ATEX[cite: 23, 28]. Nello scenario sperimentale "Urban", l'uso di ostacoli ha permesso di massimizzare la turbolenza e la dispersione del gas[cite: 234]. Durante le sessioni, ho isolato difetti di calibrazione del sensore che rilevava false concentrazioni di idrogeno anche in test di calibrazione investiti da flussi di azoto puro[cite: 170]. I risultati sperimentali sono stati confrontati criticamente con simulazioni CFD preesistenti, riscontrando misurazioni strumentali sistematicamente inferiori di un fattore 10 rispetto alle stime teoriche[cite: 251].
-                </div>
+    <div class="project-article">
+        
+        <h3>Il Progetto HYDRA</h3>
+        <p>Il Progetto HYDRA nasce dalla necessità di studiare e ottimizzare l'immissione di idrogeno nelle reti di distribuzione del gas naturale. L'attività sperimentale, condotta presso le strutture di Environment Park a Torino, punta a validare nuove tecnologie di monitoraggio per garantire una transizione energetica sicura ed efficiente, analizzando il comportamento delle miscele gas in scenari di rilascio controllato.</p>
+        
+        <div class="photo-placeholder" style="background: #f0f0f0; padding: 20px; text-align: center; border: 2px dashed #ccc; margin: 15px 0;">
+            <em>[Inserisci qui: Foto generale del setup o logo del Progetto Hydra]</em>
             </div>
-
-            <div class="modal-skills-grid">
-                <div class="skill-list">
-                    <h5>Hard Skills Acquisite</h5>
-                    <ul>
-                        <li>Gestione flussi in galleria del vento</li>
-                        <li>Protocolli di sicurezza per gas infiammabili</li>
-                        <li>Acquisizione ed elaborazione dati sperimentali</li>
-                    </ul>
-                </div>
-                <div class="skill-list">
-                    <h5>Soft Skills Sviluppate</h5>
-                    <ul>
-                        <li>Rigore nel metodo scientifico</li>
-                        <li>Attenzione ai dettagli e gestione del rischio</li>
-                        <li>Comunicazione tecnica dei risultati</li>
-                    </ul>
-                </div>
-            </div>
+    
+        <h3>Perché l'Idrogeno</h3>
+        <p>L'idrogeno rappresenta uno dei vettori energetici più promettenti per la decarbonizzazione. Non emettendo CO2 durante la combustione, offre una soluzione concreta per abbattere le emissioni dei settori "hard-to-abate". Inoltre, il "blending" (la miscelazione di idrogeno con il gas naturale) permette di sfruttare le infrastrutture di trasporto già esistenti, accelerando il passaggio verso un'economia green.</p>
+    
+        <h3>Il Problema della Sicurezza</h3>
+        <p>Sebbene offra enormi vantaggi ambientali, l'idrogeno presenta sfide tecniche significative. Essendo la molecola più piccola in natura, ha una forte tendenza a permeare e sfuggire dalle tubazioni. A questo si aggiungono limiti di infiammabilità molto ampi (dal 4% al 75% in aria) e un'energia di innesco bassissima. Questo rende fondamentale lo sviluppo di sensori capaci di rilevare tempestivamente anche minime concentrazioni per prevenire la formazione di atmosfere esplosive (ATEX).</p>
+    
+        <h3>Monitoraggio tramite Spettroscopia Raman</h3>
+        <p>Per superare i limiti dei sensori tradizionali, abbiamo impiegato la Spettroscopia Raman. Si tratta di una tecnica ottica non invasiva che sfrutta l'interazione tra la luce laser e i legami molecolari del gas. Analizzando lo scattering inelastico della luce, il sensore restituisce un "impronta digitale" ottica (lo spettro), permettendo di identificare e quantificare istantaneamente le percentuali di idrogeno e metano presenti nell'aria in tempo reale, senza contatto diretto con la miscela.</p>
+    
+        <div class="photo-placeholder" style="background: #f0f0f0; padding: 20px; text-align: center; border: 2px dashed #ccc; margin: 15px 0;">
+            <em>[Inserisci qui: Foto del sensore Raman o schema di funzionamento del laser]</em>
         </div>
+    
+        <h3>Setup Sperimentale: La Galleria del Vento</h3>
+        <p>I test sono stati eseguiti all'interno della galleria del vento situata all'Environment Park di Torino. Questo ambiente controllato è fondamentale per simulare diverse condizioni di ventilazione e turbolenza. Al suo interno è stato posizionato l'ugello di rilascio e la strumentazione ottica, permettendo di studiare le dinamiche di dispersione del pennacchio di gas esattamente come avverrebbe in un ambiente reale (es. un tunnel o un locale caldaie).</p>
+    
+        <div class="photo-placeholder" style="background: #f0f0f0; padding: 20px; text-align: center; border: 2px dashed #ccc; margin: 15px 0;">
+            <em>[Inserisci qui: Foto della galleria del vento e posizionamento dell'ugello]</em>
+        </div>
+    
+        <h3>Campagne di Rilascio</h3>
+        <p>L'attività sperimentale è stata divisa in tre fasi principali, aumentando progressivamente la complessità dei rilasci per testare l'affidabilità della lettura ottica:</p>
+    
+        <h4>1. Rilasci di Azoto Puro</h4>
+        <p>L'azoto (gas inerte) è stato utilizzato per le fasi di calibrazione a freddo. Questi test hanno permesso di validare la fluidodinamica del sistema di iniezione e di tarare il background della strumentazione Raman in condizioni di totale sicurezza prima di passare ai gas infiammabili.</p>
+        <div class="photo-placeholder" style="background: #f0f0f0; padding: 20px; text-align: center; border: 2px dashed #ccc; margin: 10px 0 25px 0;">
+            <em>[Inserisci qui: Spettro Raman dell'Azoto (N2)]</em>
+        </div>
+    
+        <h4>2. Rilasci di Idrogeno Puro</h4>
+        <p>La seconda fase ha visto il rilascio di solo idrogeno. Lo scopo è stato quello di mappare la dispersione del gas leggero nella galleria del vento, verificando la rapidità di risposta del sensore Raman nel tracciare i picchi di concentrazione specifici della molecola H2.</p>
+        <div class="photo-placeholder" style="background: #f0f0f0; padding: 20px; text-align: center; border: 2px dashed #ccc; margin: 10px 0 25px 0;">
+            <em>[Inserisci qui: Spettro Raman del picco dell'Idrogeno]</em>
+        </div>
+    
+        <h4>3. Rilasci di Miscela 90/10 (Metano/Idrogeno)</h4>
+        <p>Il test finale e più complesso ha simulato l'immissione di una miscela blended al 10% di idrogeno in volume e 90% di metano (CH4). La strumentazione ha dimostrato la capacità di distinguere simultaneamente i picchi di entrambe le molecole, provando l'efficacia del sensore nel monitorare le reali miscele proposte per la rete gas del futuro.</p>
+        <div class="photo-placeholder" style="background: #f0f0f0; padding: 20px; text-align: center; border: 2px dashed #ccc; margin: 10px 0 25px 0;">
+            <em>[Inserisci qui: Spettro Raman congiunto Metano + Idrogeno]</em>
+        </div>
+    
+    </div>
     </div>
 
     <div id="modal-matlab" class="modal-overlay" onclick="closeModalOutside(event, 'modal-matlab')">
